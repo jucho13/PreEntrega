@@ -4,22 +4,39 @@ import {ProductManager} from "../managers/productManager.js";
 const router = Router();
 const manager = new ProductManager();
 
+// router.get('/api/products', async (req, res) => {
+//     try {
+//       const { limit } = req.query;
+//       if (limit) {
+//         let newProducts = products.slice(0, limit);
+//         products = newProducts;
+//       }
+//       let products = await manager.productList();
+//       res.send({status: "success", payload: products });
+//     } catch (error) {
+//       res.status(500).json({ error: `Ocurrió un error en el servidor: ${error}` });
+//     }
+// });
+
 router.get('/api/products', async (req, res) => {
-    try {
-      const { limit } = req.query;
-      if (limit) {
-        let newProducts = products.slice(0, limit);
-        products = newProducts;
-      }
-      let products = await manager.productList();
-      res.send({status: "success", payload: products });
-    } catch (error) {
-      res.status(500).json({ error: `Ocurrió un error en el servidor: ${error}` });
+  try {
+    const { limit } = req.query;
+    let productsList = await manager.productList(); // Obtener la lista de productos primero
+
+    if (limit) {
+      let newProducts = productsList.slice(0, limit); // Recortar la lista si se proporciona el límite
+      productsList = newProducts; // Asignar la nueva lista recortada
     }
+
+    res.send({ status: "success", payload: productsList });
+  } catch (error) {
+    res.status(500).json({ error: `Ocurrió un error en el servidor: ${error}` });
+  }
 });
 
 router.post('/api/products', async (req, res) => {
   try {
+    //para agregar un nuevo producto colocar id=0 y se autogenera un id
     let productToAdd = req.body;
     console.log(productToAdd);
     if (!('status' in productToAdd)) {
@@ -47,7 +64,8 @@ router.get('/api/products/:pid', async (req, res) => {
 router.put('/api/products/:pid', async (req, res) => {
     const {pid} = req.params;
     let productToUpdate = req.body;
-    let p = await manager.updateProduct(parseInt(pid), productToUpdate);
+    let p = await manager.updateProduct(productToUpdate.title,productToUpdate.description,productToUpdate.price,productToUpdate.thumbnail,productToUpdate.code,
+      productToUpdate.stock,productToUpdate.status,parseInt(pid));
     if(p) {
         res.send({status: "success", payload: p });
       }else {

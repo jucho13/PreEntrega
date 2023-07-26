@@ -26,77 +26,122 @@ export class ProductManager {
     this.#productFilePath = `${this.#productDirPath}/Products.json`;
   }
 
-    createProduct = async (title, description, price, thumbnail, code, stock,status, id) => {
-        let sumador = 0;
-        for (let i = 0; i < this.#products.length; i++) {
-        if (this.#products[i].code === code) {
-            console.log(`El código ${code} está repetido`);
-            sumador++;
-            break;
-        }
-        }
-        if (sumador === 0 && Product.id === 0) {
-            Product.id++;
-            let newProduct = new Product(title, description, price, thumbnail, code, stock,status, (id = Product.id));
-            console.log('Crear Producto: producto a registrar:');
-            console.log(newProduct);
+    // createProduct = async (title, description, price, thumbnail, code, stock,status, id) => {
+    //     let sumador = 0;
+    //     for (let i = 0; i < this.#products.length; i++) {
+    //     if (this.#products[i].code === code) {
+    //         console.log(`El código ${code} está repetido`);
+    //         sumador++;
+    //         break;
+    //     }
+    //     }
+    //     if (sumador === 0 && id === 0) {
+    //         Product.id++;
+    //         let newProduct = new Product(title, description, price, thumbnail, code, stock,status, (id = Product.id));
+    //         console.log('Crear Producto: producto a registrar:');
+    //         console.log(newProduct);
 
-            try {
-                await fs.promises.mkdir(this.#productDirPath, { recursive: true });
-                try {
-                await fs.promises.writeFile(this.#productFilePath, '[]');
-                } catch (error) {
-                    await console.log('error');
-                }
+    //         try {
+    //             await fs.promises.mkdir(this.#productDirPath, { recursive: true });
+    //             try {
+    //             await fs.promises.writeFile(this.#productFilePath, '[]');
+    //             } catch (error) {
+    //                 await console.log('error');
+    //             }
 
-            let productsFile = await fs.promises.readFile(this.#productFilePath, 'utf-8');
-            this.#products = JSON.parse(productsFile);
+    //         let productsFile = await fs.promises.readFile(this.#productFilePath, 'utf-8');
+    //         this.#products = JSON.parse(productsFile);
 
-            console.log('Productos encontrados:');
-            console.log(this.#products);-
-            this.#products.push(newProduct);
-            console.log('Lista actualizada de productos:');
-            console.log(this.#products);
+    //         console.log('Productos encontrados:');
+    //         console.log(this.#products);-
+    //         this.#products.push(newProduct);
+    //         console.log('Lista actualizada de productos:');
+    //         console.log(this.#products);
 
-            await fs.promises.writeFile(this.#productFilePath, JSON.stringify(this.#products, null, 2, '\t'));
-            return {code: 200, status: 'Producto agregado'};
-            } catch (error) {
-                console.error(`Error creando producto nuevo: ${JSON.stringify(newProduct)}, detalle del error: ${error}`);
-                throw Error(`Error creando producto nuevo: ${JSON.stringify(newProduct)}, detalle del error: ${error}`);
-            }
+    //         await fs.promises.writeFile(this.#productFilePath, JSON.stringify(this.#products, null, 2, '\t'));
+    //         return {code: 200, status: 'Producto agregado'};
+    //         } catch (error) {
+    //             console.error(`Error creando producto nuevo: ${JSON.stringify(newProduct)}, detalle del error: ${error}`);
+    //             throw Error(`Error creando producto nuevo: ${JSON.stringify(newProduct)}, detalle del error: ${error}`);
+    //         }
         
-        } 
-        else if (sumador === 0 && Product.id !== 0) {
-            Product.id++;
-            let newProduct = new Product(title, description, price, thumbnail, code, stock,status, id=Product.id);
-            console.log('Crear Producto: producto a registrar:');
-            console.log(newProduct);
+    //     } 
+    //     else if (sumador === 0 && id !== 0) {
 
-            try {
-                await fs.promises.mkdir(this.#productDirPath, { recursive: true });
-                try {
-                    await fs.promises.stat(this.#productFilePath);
-                } catch (error) {
-                await fs.promises.writeFile(this.#productFilePath, '[]');
-            }
+    //         let newProduct = new Product(title, description, price, thumbnail, code, stock,status, id);
+    //         console.log('Crear Producto: producto a registrar:');
+    //         console.log(newProduct);
 
-          let productsFile = await fs.promises.readFile(this.#productFilePath, 'utf-8');
+    //         try {
+    //             await fs.promises.mkdir(this.#productDirPath, { recursive: true });
+    //             try {
+    //                 await fs.promises.stat(this.#productFilePath);
+    //             } catch (error) {
+    //             await fs.promises.writeFile(this.#productFilePath, '[]');
+    //         }
+
+    //       let productsFile = await fs.promises.readFile(this.#productFilePath, 'utf-8');
+    //       this.#products = JSON.parse(productsFile);
+
+    //       console.log('Productos encontrados:');
+    //       console.log(this.#products);
+    //       this.#products.push(newProduct);
+    //       console.log('Lista actualizada de productos:');
+    //       console.log(this.#products);
+        
+    //       await fs.promises.writeFile(this.#productFilePath, JSON.stringify(this.#products, null, 2, '\t'));
+    //       return {code: 200, status: 'Producto agregado'};
+    //       } catch (error) {
+    //         console.error(`Error creando producto nuevo: ${JSON.stringify(newProduct)}, detalle del error: ${error}`);
+    //         throw Error(`Error creando producto nuevo: ${JSON.stringify(newProduct)}, detalle del error: ${error}`);
+    //       }
+    //     }
+    //  }
+
+    createProduct = async (title, description, price, thumbnail, code, stock, status, id) => {
+        const isCodeRepeated = this.#products.some((product) => product.code === code);
+      
+        if (isCodeRepeated) {
+          console.log(`El código ${code} está repetido`);
+          return { code: 400, status: 'Código de producto repetido' };
+        }
+      
+        if (id === 0) {
+          Product.id++;
+          id = Product.id;
+        }
+      
+        const newProduct = new Product(title, description, price, thumbnail, code, stock, status, id);
+        console.log('Crear Producto: producto a registrar:');
+        console.log(newProduct);
+      
+        try {
+          await fs.promises.mkdir(this.#productDirPath, { recursive: true });
+          const productsFileExists = await fs.promises.stat(this.#productFilePath).catch(() => false);
+      
+          if (!productsFileExists) {
+            await fs.promises.writeFile(this.#productFilePath, '[]');
+          }
+      
+          const productsFile = await fs.promises.readFile(this.#productFilePath, 'utf-8');
           this.#products = JSON.parse(productsFile);
-
+      
           console.log('Productos encontrados:');
           console.log(this.#products);
+      
           this.#products.push(newProduct);
           console.log('Lista actualizada de productos:');
           console.log(this.#products);
-        
+      
           await fs.promises.writeFile(this.#productFilePath, JSON.stringify(this.#products, null, 2, '\t'));
-          return {code: 200, status: 'Producto agregado'};
-          } catch (error) {
-            console.error(`Error creando producto nuevo: ${JSON.stringify(newProduct)}, detalle del error: ${error}`);
-            throw Error(`Error creando producto nuevo: ${JSON.stringify(newProduct)}, detalle del error: ${error}`);
-          }
+          return { code: 200, status: 'Producto agregado' };
+        } catch (error) {
+          console.error(`Error creando producto nuevo: ${JSON.stringify(newProduct)}, detalle del error: ${error}`);
+          throw new Error(`Error creando producto nuevo: ${JSON.stringify(newProduct)}, detalle del error: ${error}`);
         }
-     }
+      }
+      
+
     productList = async () => {
         try {
 
@@ -125,8 +170,7 @@ export class ProductManager {
             console.log("Producto buscado por ID:NOT FOUND");
         }
         else
-        {
-            const produ=this.#products.find((prod)=> prod.id === id);
+        {            const produ=this.#products.find((prod)=> prod.id === id);
             console.log("Objeto obtenido por ID = ");
             console.log(this.#products.find((prod)=> prod.id === id));
             return (JSON.stringify(produ));
@@ -139,13 +183,14 @@ export class ProductManager {
         const index = this.#products.findIndex(prod => prod.id === id);
         // console.log(`Producto proximo a ser eliminado:v ${this.#products[index].title} ID numero: ${this.#products[index].id}`);
         this.#products.splice(index, 1);
-        await fs.writeFile(this.#productFilePath, JSON.stringify(this.#products, null, 2, '\t'));
+        await fs.promises.writeFile(this.#productFilePath, JSON.stringify(this.#products, null, 2, '\t'));
         console.log("Lista actualizada de productos desde el programa: ");
         console.log(this.#products);
         console.log("Lista actualizada de productos desde el archivo: ");
-        let productsFile = await fs.readFile(this.#productFilePath, "utf-8");
+        let productsFile = await fs.promises.readFile(this.#productFilePath, "utf-8");
         console.log(productsFile);
         console.log("Producto eliminado correctamente");
+        return true;
     }
    
 
@@ -155,15 +200,18 @@ export class ProductManager {
 
     async updateProduct (title, description, price, thumbnail, code, stock,status,id){ 
         const index = this.#products.findIndex(obj => obj.id === id);
-        console.log(`Producto proximo a ser Updateado: ${this.#products[index].title} description: ${this.#products[index].description}`);
-        console.log(`Reemplazado por:${title} description: ${description}`);
+        console.log(`El siguiente producto va a ser updateado por:${title} description: ${description}`);
         await this.deleteProduct(id);
-        await this.createProduct(title,description,price,thumbnail,code,stock,status,id);
+        const updateado=await this.createProduct(title,description,price,thumbnail,code,stock,status,id);
+        if (updateado){
+            return (JSON.stringify(updateado));
+        }
+        
     }
     
     
 }
-  // ...
+  
 
 
 
