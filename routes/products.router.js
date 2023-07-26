@@ -34,7 +34,8 @@ router.post('/api/products', async (req, res) => {
 });
 
 router.get('/api/products/:pid', async (req, res) => {
-    const { pid } = req.params;
+    const {pid} = req.params;
+    console.log(`pid: ${pid}`);
     const product = await manager.getProductsbyID(parseInt(pid));
     if(product) {
       res.send({status: "success", payload: product });
