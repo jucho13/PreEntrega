@@ -1,15 +1,21 @@
-import {Router} from "express";
+import express from "express";
+import { Router } from "express";
 
 import {Container} from "../managers/cartManager.js";
 const CartService = new Container();
 import {ProductManager} from "../managers/productManager.js";
 const ProductService = new ProductManager();
 
-const router = Router();
+const router = express.Router();
 
-router.post('/api/cart', (req, res) => {
-  CartService.create().then(result => res.send(result))
-})
+router.post('/api/cart', async (req, res) => {
+  try {
+    const result = await CartService.create();
+    res.send(result);
+}
+  catch (error) {
+    res.status(500).json({ error: `Ocurrió un error en el servidor: ${error}` });
+}})
 router.delete('/api/cart/:id', (req, res) => {
   let param = req.params.id
   if (isNaN(param)) return (res.status(400).send({ error: "No es un numero" }))
@@ -53,4 +59,4 @@ router.delete('/api/cart/:id/products/:id_prod', (req, res) => {
   let prodId = parseInt(prodIdParam)
   CartService.deleteProduct(cartId, prodId).then(result => res.send(result))
 })
-export default Router;
+export default router;
