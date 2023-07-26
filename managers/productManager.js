@@ -1,5 +1,5 @@
 import fs from "fs";
-import { stringify } from "querystring";
+
 
 class Product {
   constructor(title, description, price, thumbnail, code, stock,status, id) {
@@ -22,7 +22,7 @@ export class ProductManager {
 
   constructor() {
     this.#products = [];
-    this.#productDirPath = './files';
+    this.#productDirPath = '../files';
     this.#productFilePath = `${this.#productDirPath}/Products.json`;
   }
 
@@ -59,10 +59,12 @@ export class ProductManager {
             console.log(this.#products);
 
             await fs.promises.writeFile(this.#productFilePath, JSON.stringify(this.#products, null, 2, '\t'));
+            return {code: 200, status: 'Producto agregado'};
             } catch (error) {
                 console.error(`Error creando producto nuevo: ${JSON.stringify(newProduct)}, detalle del error: ${error}`);
                 throw Error(`Error creando producto nuevo: ${JSON.stringify(newProduct)}, detalle del error: ${error}`);
             }
+        
         } 
         else if (sumador === 0 && Product.id !== 0) {
             Product.id++;
@@ -86,8 +88,9 @@ export class ProductManager {
           this.#products.push(newProduct);
           console.log('Lista actualizada de productos:');
           console.log(this.#products);
-
+        
           await fs.promises.writeFile(this.#productFilePath, JSON.stringify(this.#products, null, 2, '\t'));
+          return {code: 200, status: 'Producto agregado'};
           } catch (error) {
             console.error(`Error creando producto nuevo: ${JSON.stringify(newProduct)}, detalle del error: ${error}`);
             throw Error(`Error creando producto nuevo: ${JSON.stringify(newProduct)}, detalle del error: ${error}`);

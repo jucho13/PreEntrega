@@ -21,10 +21,12 @@ router.get('/api/products', async (req, res) => {
 router.post('/api/products', async (req, res) => {
   try {
     let productToAdd = req.body;
+    console.log(productToAdd);
     if (!('status' in productToAdd)) {
       productToAdd.status = true;
     }
-    let status = await manager.createProduct(productToAdd);
+    let status = await manager.createProduct(productToAdd.title,productToAdd.description,productToAdd.price,productToAdd.thumbnail,productToAdd.code,
+      productToAdd.stock,productToAdd.status,productToAdd.id);
     res.status(status.code).json({status: status.status})
   } catch (error) {
     res.status(500).json({ error: `Ocurrió un error en el servidor: ${error}` });
