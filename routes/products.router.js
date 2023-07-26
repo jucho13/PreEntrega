@@ -11,7 +11,7 @@ router.get('/api/products', async (req, res) => {
         let newProducts = products.slice(0, limit);
         products = newProducts;
       }
-      let products = await manager.getProducts();
+      let products = await manager.productList();
       res.send({status: "success", payload: products });
     } catch (error) {
       res.status(500).json({ error: `Ocurrió un error en el servidor: ${error}` });

@@ -1,19 +1,5 @@
 [
   {
-    "title": "Pan",
-    "description": "253g Acaricia",
-    "price": 32,
-    "thumbnail": [
-      [
-        "https://carrefourar.vtexassets.com/arquivos/ids/257852-800-auto?v=638011165657870000&width=800&height=auto&aspect=true"
-      ]
-    ],
-    "code": "A1332",
-    "stock": 232,
-    "status": "true",
-    "id": 1
-  },
-  {
     "title": "Yerba",
     "description": "Mañanita",
     "price": 12,
@@ -25,6 +11,6 @@
     "code": "A4332",
     "stock": 212,
     "status": "true",
-    "id": 2
+    "id": 1
   }
 ]

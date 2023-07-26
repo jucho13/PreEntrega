@@ -101,7 +101,7 @@ export class ProductManager {
         try {
 
             //leemos el archivo
-            let productsFile = await fs.readFile(this.#productFilePath, "utf-8");
+            let productsFile = await fs.promises.readFile(this.#productFilePath, "utf-8");
 
 
             //Obtenemos el JSON String 
@@ -122,9 +122,7 @@ export class ProductManager {
     //Leer productos por ID
     getProductsbyID = async (id) => {
         if(!this.#products.find((prod)=> prod.id === id)){
-            const produ=this.#products.find((prod)=> prod.id === id);
             console.log("Producto buscado por ID:NOT FOUND");
-            return (JSON.stringify(produ));
         }
         else
         {
