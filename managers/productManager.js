@@ -26,78 +26,6 @@ export class ProductManager {
     this.#productFilePath = `${this.#productDirPath}/Products.json`;
   }
 
-    // createProduct = async (title, description, price, thumbnail, code, stock,status, id) => {
-    //     let sumador = 0;
-    //     for (let i = 0; i < this.#products.length; i++) {
-    //     if (this.#products[i].code === code) {
-    //         console.log(`El código ${code} está repetido`);
-    //         sumador++;
-    //         break;
-    //     }
-    //     }
-    //     if (sumador === 0 && id === 0) {
-    //         Product.id++;
-    //         let newProduct = new Product(title, description, price, thumbnail, code, stock,status, (id = Product.id));
-    //         console.log('Crear Producto: producto a registrar:');
-    //         console.log(newProduct);
-
-    //         try {
-    //             await fs.promises.mkdir(this.#productDirPath, { recursive: true });
-    //             try {
-    //             await fs.promises.writeFile(this.#productFilePath, '[]');
-    //             } catch (error) {
-    //                 await console.log('error');
-    //             }
-
-    //         let productsFile = await fs.promises.readFile(this.#productFilePath, 'utf-8');
-    //         this.#products = JSON.parse(productsFile);
-
-    //         console.log('Productos encontrados:');
-    //         console.log(this.#products);-
-    //         this.#products.push(newProduct);
-    //         console.log('Lista actualizada de productos:');
-    //         console.log(this.#products);
-
-    //         await fs.promises.writeFile(this.#productFilePath, JSON.stringify(this.#products, null, 2, '\t'));
-    //         return {code: 200, status: 'Producto agregado'};
-    //         } catch (error) {
-    //             console.error(`Error creando producto nuevo: ${JSON.stringify(newProduct)}, detalle del error: ${error}`);
-    //             throw Error(`Error creando producto nuevo: ${JSON.stringify(newProduct)}, detalle del error: ${error}`);
-    //         }
-        
-    //     } 
-    //     else if (sumador === 0 && id !== 0) {
-
-    //         let newProduct = new Product(title, description, price, thumbnail, code, stock,status, id);
-    //         console.log('Crear Producto: producto a registrar:');
-    //         console.log(newProduct);
-
-    //         try {
-    //             await fs.promises.mkdir(this.#productDirPath, { recursive: true });
-    //             try {
-    //                 await fs.promises.stat(this.#productFilePath);
-    //             } catch (error) {
-    //             await fs.promises.writeFile(this.#productFilePath, '[]');
-    //         }
-
-    //       let productsFile = await fs.promises.readFile(this.#productFilePath, 'utf-8');
-    //       this.#products = JSON.parse(productsFile);
-
-    //       console.log('Productos encontrados:');
-    //       console.log(this.#products);
-    //       this.#products.push(newProduct);
-    //       console.log('Lista actualizada de productos:');
-    //       console.log(this.#products);
-        
-    //       await fs.promises.writeFile(this.#productFilePath, JSON.stringify(this.#products, null, 2, '\t'));
-    //       return {code: 200, status: 'Producto agregado'};
-    //       } catch (error) {
-    //         console.error(`Error creando producto nuevo: ${JSON.stringify(newProduct)}, detalle del error: ${error}`);
-    //         throw Error(`Error creando producto nuevo: ${JSON.stringify(newProduct)}, detalle del error: ${error}`);
-    //       }
-    //     }
-    //  }
-
     createProduct = async (title, description, price, thumbnail, code, stock, status, id) => {
         const isCodeRepeated = this.#products.some((product) => product.code === code);
       
@@ -165,18 +93,54 @@ export class ProductManager {
         }
     }  
     //Leer productos por ID
-    getProductsbyID = async (id) => {
-        if(!this.#products.find((prod)=> prod.id === id)){
-            console.log("Producto buscado por ID:NOT FOUND");
-        }
-        else
-        {            const produ=this.#products.find((prod)=> prod.id === id);
-            console.log("Objeto obtenido por ID = ");
-            console.log(this.#products.find((prod)=> prod.id === id));
-            return (JSON.stringify(produ));
-        }
-    }
 
+    getProductsbyID = async (id) => {
+      let products = await this.productList();
+      console.log(products);
+  
+      const produ = products.find((prod) => prod.id === id);
+  
+      if (!produ) {
+          console.log(`Producto ${id} en el programa = ${produ}`);
+          console.log("Producto buscado por ID: NOT FOUND");
+      } else {
+          console.log(`Producto ${id} en el programa = ${produ}`);
+          console.log("Objeto obtenido por ID = ");
+          console.log(produ);
+          return JSON.stringify(produ);
+      }
+  }
+  
+    // getProductsbyID = async (id) => {
+    //     let products= await this.productList();
+    //     console.log(products);
+    //     if(!products.find((prod)=> prod.id === id)){
+    //       console.log(`Producto ${id} en el programa= ${prod}`);
+    //       console.log("Producto buscado por ID:NOT FOUND");
+    //     }
+    //     else
+    //     { console.log(`Producto ${id} en el programa= ${prod}`);
+    //       const produ=products.find((prod)=> prod.id === id);
+    //       console.log("Objeto obtenido por ID = ");
+    //       console.log(produ);
+    //       return (JSON.stringify(produ));
+    //     }
+    // }
+
+    // getProductsbyID = async (id) => {
+    //   if (fs.existsSync(pathToProducts)) {
+    //     let data = await fs.promises.readFile(pathToProducts, 'utf-8');
+    //     let products = JSON.parse(data);
+    //     let product = products.find((product) => product.id === id);
+    //     if (product) {
+    //       return product; // Devuelve el objeto del producto encontrado
+    //     } else {
+    //       return { error: "Producto buscado por ID: NOT FOUND" }; // Devuelve un objeto con la propiedad 'error'
+    //     }
+    //   } else {
+    //     throw new Error("No se encontró el archivo de productos.");
+    //   }
+    // };
     // elimino un producto a traves de un id
 
     deleteProduct = async (id) => {

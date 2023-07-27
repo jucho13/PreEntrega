@@ -40,14 +40,15 @@ export class Container{
   }
   getById = async(id)=>{
       if(fs.existsSync(pathToCart)){
-          let data = await fs.promises.readFile(pathToCart,'utf-8')
-          let items = JSON.parse(data)
-          let cart = items.find(u => u.id === id)
+          let data = await fs.promises.readFile(pathToCart,'utf-8');
+          let items = JSON.parse(data);
+          let cart = items.find(u => u.id === id);
           if(cart){
-              return(cart)
+                console.log('Cart found:', cart);
+                return(cart);
           }
           else{
-              return{status:"error", error:"Cart not found"}
+                return{status:"error", error:"Cart not found"};
           }
       }
   }
@@ -84,6 +85,8 @@ export class Container{
       }
       
   }
+
+
   deleteProduct = async (id, id_prod)=>{
       let data = await fs.promises.readFile(pathToCart,'utf-8');
       let items = JSON.parse(data);

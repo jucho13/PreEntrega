@@ -23,40 +23,44 @@ router.delete('/api/cart/:id', (req, res) => {
   CartService.deleteById(id).then(result => res.send(result))
 })
 router.post('/api/cart/:id/products', async (req, res) => {
-  let param = req.params.id
-  let productsId = req.body
-  let realProducts = []
-  if (isNaN(param)) return (res.status(400).send({ error: "No es un numero" }))
-  let id = parseInt(param)
+  let param = req.params.id;
+  let productsId = req.body;
+  let realProducts = [];
+  if (isNaN(param)) return (res.status(400).send({ error: "No es un numero" }));
+  let id = parseInt(param);
+  console.log(`Cart ID= ${param}`);
+  console.log(`Products ID= ${productsId}`);
   await Promise.all(productsId.map(async (products) => {
-      console.log(products)
-      let verifier = await ProductService.getById(products)
-      console.log(verifier)
+      console.log(products);
+      let verifier = await ProductService.getProductsbyID(products);
+      console.log(verifier);
       if (!verifier.error) {
-          realProducts.push(products)
+          realProducts.push(products);
       }
-  })).then(CartService.addProduct(id, realProducts).then(result => res.send(result)))
-
+  }))
+  let carritoCompleto=await CartService.addProduct(id, realProducts);
+  res.send(carritoCompleto);
 })
 router.get('/api/cart/:id/products', async (req, res) => {
-  let param = req.params.id
-  if (isNaN(param)) return (res.status(400).send({ error: "No es un numero" }))
-  let id = parseInt(param)
-  let cart = await CartService.getById(id)
-  let productsId = cart.products
-  let cartProducts = []
+  let param = req.params.id;
+  if (isNaN(param)) return (res.status(400).send({ error: "No es un numero" }));
+  let id = parseInt(param);
+  let cart = await CartService.getById(id);
+  let productsId = cart.products;
+  let cartProducts = [];
   await Promise.all(productsId.map(async (products) => {
-      let newProduct = await ProductService.getById(products)
-      cartProducts.push(newProduct)
+      let newProduct = await ProductService.getProductsbyID(products);
+      cartProducts.push(newProduct);
   }))
-  res.send(cartProducts)
+  res.send(cartProducts);
 })
 router.delete('/api/cart/:id/products/:id_prod', (req, res) => {
-  let cartIdParam = req.params.id
-  let prodIdParam = req.params.id_prod
-  if (isNaN(cartIdParam || prodIdParam)) return (res.status(400).send({ error: "No es un numero" }))
-  let cartId = parseInt(cartIdParam)
-  let prodId = parseInt(prodIdParam)
-  CartService.deleteProduct(cartId, prodId).then(result => res.send(result))
+  let cartIdParam = req.params.id;
+  let prodIdParam = req.params.id_prod;
+  if (isNaN(cartIdParam || prodIdParam)) return (res.status(400).send({ error: "No es un numero" }));
+  let cartId = parseInt(cartIdParam);
+  let prodId = parseInt(prodIdParam);
+  let result= CartService.deleteProduct(cartId, prodId);
+  res.send("Producto Borrado");
 })
 export default router;

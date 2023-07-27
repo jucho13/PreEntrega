@@ -4,19 +4,7 @@ import {ProductManager} from "../managers/productManager.js";
 const router = Router();
 const manager = new ProductManager();
 
-// router.get('/api/products', async (req, res) => {
-//     try {
-//       const { limit } = req.query;
-//       if (limit) {
-//         let newProducts = products.slice(0, limit);
-//         products = newProducts;
-//       }
-//       let products = await manager.productList();
-//       res.send({status: "success", payload: products });
-//     } catch (error) {
-//       res.status(500).json({ error: `Ocurrió un error en el servidor: ${error}` });
-//     }
-// });
+
 
 router.get('/api/products', async (req, res) => {
   try {
