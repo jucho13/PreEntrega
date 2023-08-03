@@ -22,7 +22,7 @@ export class ProductManager {
 
   constructor() {
     this.#products = [];
-    this.#productDirPath = '../files';
+    this.#productDirPath = '.src/files';
     this.#productFilePath = `${this.#productDirPath}/Products.json`;
   }
 
@@ -111,37 +111,7 @@ export class ProductManager {
       }
   }
   
-    // getProductsbyID = async (id) => {
-    //     let products= await this.productList();
-    //     console.log(products);
-    //     if(!products.find((prod)=> prod.id === id)){
-    //       console.log(`Producto ${id} en el programa= ${prod}`);
-    //       console.log("Producto buscado por ID:NOT FOUND");
-    //     }
-    //     else
-    //     { console.log(`Producto ${id} en el programa= ${prod}`);
-    //       const produ=products.find((prod)=> prod.id === id);
-    //       console.log("Objeto obtenido por ID = ");
-    //       console.log(produ);
-    //       return (JSON.stringify(produ));
-    //     }
-    // }
-
-    // getProductsbyID = async (id) => {
-    //   if (fs.existsSync(pathToProducts)) {
-    //     let data = await fs.promises.readFile(pathToProducts, 'utf-8');
-    //     let products = JSON.parse(data);
-    //     let product = products.find((product) => product.id === id);
-    //     if (product) {
-    //       return product; // Devuelve el objeto del producto encontrado
-    //     } else {
-    //       return { error: "Producto buscado por ID: NOT FOUND" }; // Devuelve un objeto con la propiedad 'error'
-    //     }
-    //   } else {
-    //     throw new Error("No se encontró el archivo de productos.");
-    //   }
-    // };
-    // elimino un producto a traves de un id
+  
 
     deleteProduct = async (id) => {
         const index = this.#products.findIndex(prod => prod.id === id);
