@@ -1,6 +1,6 @@
 const socket = io();
 
-// socket.emit('mensajeKey', "Hola desde el cliente")
+socket.emit('mensajeKey', "Hola desde el cliente");
 
 
 socket.on("realtimeproducts", (data) => {

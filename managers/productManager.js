@@ -22,7 +22,7 @@ export class ProductManager {
 
   constructor() {
     this.#products = [];
-    this.#productDirPath = '.src/files';
+    this.#productDirPath = 'src/files';
     this.#productFilePath = `${this.#productDirPath}/Products.json`;
   }
 
