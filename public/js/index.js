@@ -4,6 +4,6 @@ socket.emit('mensajeKey', "Hola desde el cliente");
 
 
 socket.on("realtimeproducts", (data) => {
-  const realTimeProducts = document.getProductsbyID("realTimeProducts");
+  const realTimeProducts = document.getElementById("realTimeProducts");
   realTimeProducts.innerHTML += `${JSON.stringify(data)}`;
 });
