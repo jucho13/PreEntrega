@@ -1,73 +1,4 @@
-// import fs from "fs";
 
-
-// class Product {
-//   constructor(title, description, price, thumbnail, code, stock,status, id) {
-//     this.title = title;
-//     this.description = description;
-//     this.price = price;
-//     this.thumbnail = [thumbnail];
-//     this.code = code;
-//     this.stock = stock;
-//     this.status= status;
-//     this.id = id;
-//   }
-//   static id = 0;
-// }
-
-// export class ProductManager {
-//   #products;
-//   #productDirPath;
-//   #productFilePath;
-
-//   constructor() {
-//     this.#products = [];
-//     this.#productDirPath = 'src/files';
-//     this.#productFilePath = `${this.#productDirPath}/Products.json`;
-//   }
-
-//     createProduct = async (title, description, price, thumbnail, code, stock, status, id) => {
-//         const isCodeRepeated = this.#products.some((product) => product.code === code);
-      
-//         if (isCodeRepeated) {
-//           console.log(`El código ${code} está repetido`);
-//           return { code: 400, status: 'Código de producto repetido' };
-//         }
-      
-//         if (id === 0) {
-//           Product.id++;
-//           id = Product.id;
-//         }
-      
-//         const newProduct = new Product(title, description, price, thumbnail, code, stock, status, id);
-//         console.log('Crear Producto: producto a registrar:');
-//         console.log(newProduct);
-      
-//         try {
-//           await fs.promises.mkdir(this.#productDirPath, { recursive: true });
-//           const productsFileExists = await fs.promises.stat(this.#productFilePath).catch(() => false);
-      
-//           if (!productsFileExists) {
-//             await fs.promises.writeFile(this.#productFilePath, '[]');
-//           }
-      
-//           const productsFile = await fs.promises.readFile(this.#productFilePath, 'utf-8');
-//           this.#products = JSON.parse(productsFile);
-      
-//           console.log('Productos encontrados:');
-//           console.log(this.#products);
-      
-//           this.#products.push(newProduct);
-//           console.log('Lista actualizada de productos:');
-//           console.log(this.#products);
-      
-//           await fs.promises.writeFile(this.#productFilePath, JSON.stringify(this.#products, null, 2, '\t'));
-//           return { code: 200, status: 'Producto agregado' };
-//         } catch (error) {
-//           console.error(`Error creando producto nuevo: ${JSON.stringify(newProduct)}, detalle del error: ${error}`);
-//           throw new Error(`Error creando producto nuevo: ${JSON.stringify(newProduct)}, detalle del error: ${error}`);
-//         }
-//       }
 import fs from "fs";
 
 class Product {
@@ -214,20 +145,39 @@ export class ProductManager {
   
   
 
+    // deleteProduct = async (id) => {
+    //     const index = this.#products.findIndex(prod => prod.id === id);
+    //     // console.log(`Producto proximo a ser eliminado:v ${this.#products[index].title} ID numero: ${this.#products[index].id}`);
+    //     this.#products.splice(index, 1);
+    //     await fs.promises.writeFile(this.#productFilePath, JSON.stringify(this.#products, null, 2, '\t'));
+    //     console.log("Lista actualizada de productos desde el programa: ");
+    //     console.log(this.#products);
+    //     console.log("Lista actualizada de productos desde el archivo: ");
+    //     let productsFile = await fs.promises.readFile(this.#productFilePath, "utf-8");
+    //     console.log(productsFile);
+    //     console.log("Producto eliminado correctamente");
+    //     return true;
+    // }
     deleteProduct = async (id) => {
-        const index = this.#products.findIndex(prod => prod.id === id);
-        // console.log(`Producto proximo a ser eliminado:v ${this.#products[index].title} ID numero: ${this.#products[index].id}`);
+      try {
+        let productLista=await this.productList();
+        const index = productLista.findIndex((prod) => (prod.id) === id);
+        if (index === -1) {
+          console.log(`No se encontró ningún producto con ID: ${id}`);
+          return false;
+        }
+    
         this.#products.splice(index, 1);
+    
         await fs.promises.writeFile(this.#productFilePath, JSON.stringify(this.#products, null, 2, '\t'));
-        console.log("Lista actualizada de productos desde el programa: ");
-        console.log(this.#products);
-        console.log("Lista actualizada de productos desde el archivo: ");
-        let productsFile = await fs.promises.readFile(this.#productFilePath, "utf-8");
-        console.log(productsFile);
         console.log("Producto eliminado correctamente");
         return true;
-    }
-   
+      } catch (error) {
+        console.error(`Error al eliminar el producto con ID ${id}: ${error}`);
+        return false;
+      }
+    };
+    
 
 
 

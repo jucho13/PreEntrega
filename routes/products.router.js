@@ -1,5 +1,6 @@
 import {Router} from "express";
 import {ProductManager} from "../managers/productManager.js";
+import { getIO } from "../src/app.js";
 
 const router = Router();
 const manager = new ProductManager();
@@ -32,6 +33,8 @@ router.post('/api/products', async (req, res) => {
     }
     let status = await manager.createProduct(productToAdd.title,productToAdd.description,productToAdd.price,productToAdd.thumbnail,productToAdd.code,
       productToAdd.stock,productToAdd.status,productToAdd.id);
+    const io = getIO();
+    io.emit('newProduct', productToAdd);
     res.status(status.code).json({status: status.status})
   } catch (error) {
     res.status(500).json({ error: `Ocurrió un error en el servidor: ${error}` });
@@ -64,6 +67,8 @@ router.put('/api/products/:pid', async (req, res) => {
 router.delete('/api/products/:pid', async (req, res) => {
   const {pid} = req.params;
   let p = await manager.deleteProduct(parseInt(pid));
+  const io = getIO();
+  io.emit('deleteProduct', pid);
   if(p) {
     res.send({status: "success", payload: p });
   }else {

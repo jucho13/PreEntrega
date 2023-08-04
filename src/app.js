@@ -3,9 +3,10 @@ import productRouter from "../routes/products.router.js";
 import cartRouter from "../routes/carts.router.js";
 import { __dirname } from "../utils.js";
 import viewRouter from "../routes/views.router.js";
+import RTPRouter from "../routes/realtimeproducts.router.js";
 import handlebars from 'express-handlebars';
 import { Server } from "socket.io";
-import {ProductManager} from "../managers/productManager.js";
+import http from 'http';
 
 const app=express();
 
@@ -23,25 +24,27 @@ app.use("/",cartRouter);
 app.use(express.static(__dirname+ "/public"));
 
 
+// declaramos el router
+app.use('/', viewRouter);
+app.use('/',RTPRouter);
+// instanciamos socket.io
+const server = http.createServer(app);
+const io = new Server(server);
 
-const httpServer=app.listen(PORT,()=>{
+// abrimos el canal de comunicacion
+
+io.on('connection', socket => {
+  console.log('Nuevo cliente conectado');
+  socket.on('disconnect', () => {
+      console.log('Un cliente se ha desconectado');
+  });
+});
+
+
+server.listen(PORT,()=>{
     console.log("Server is working ");
 })
 
-// declaramos el router
-app.use('/', viewRouter);
-
-// instanciamos socket.io
-
-const socketServer= new Server(httpServer);
-const p=new ProductManager;
-// abrimos el canal de comunicacion
-
-socketServer.on('connection', async (socket) => {
-    try {
-      const productsResult = await p.productList();
-      socket.emit('realtimeproducts', productsResult);
-    } catch (error) {
-      console.error('Error', error);
-    }
-  });
+export function getIO() {
+  return io;
+}

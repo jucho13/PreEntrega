@@ -7,15 +7,12 @@ const pmanager= new ProductManager();
 
 
 router.get("/",async(req,res)=>{
-    const listaproductos=await pmanager.productList()
-    console.log(`Lista recibida por views.router ${listaproductos}`);
-    res.render("home",{listaproductos})
+    const listaproductos=await pmanager.productList();
+    // console.log(`Lista recibida por views.router ${listaproductos}`);
+    res.render("home",{listaproductos});
   })
   
-  router.get("/realtimeproducts",async(req,res)=>{
-     res.render("realTimeProducts")
-  })
-  
+
 
 
 export default router;
