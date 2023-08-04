@@ -61,17 +61,20 @@ export class ProductManager {
     }
   }
 
-  createProduct = async (title, description, price, thumbnail, code, stock, status) => {
-    const isCodeRepeated = this.#products.some((product) => product.code === code);
-
+  createProduct = async (title, description, price, thumbnail, code, stock, status,id) => {
+    const listaProd=await this.productList();
+    const isCodeRepeated = listaProd.some((product) => product.code === code);
     if (isCodeRepeated) {
       console.log(`El código ${code} está repetido`);
       return { code: 400, status: 'Código de producto repetido' };
     }
-
-    const newProductId = await this.getNextProductId();
-
-    const newProduct = new Product(title, description, price, thumbnail, code, stock, status, newProductId);
+    let newProduct="";
+    if(id === 0){
+      let newProductId = await this.getNextProductId();
+      newProduct = new Product(title, description, price, thumbnail, code, stock, status, newProductId);
+    }else{
+      newProduct = new Product(title, description, price, thumbnail, code, stock, status, id);
+    }
     console.log('Crear Producto: producto a registrar:');
     console.log(newProduct);
 
@@ -183,8 +186,9 @@ export class ProductManager {
 
     //Actualizar un producto pidiendo su informacion
 
-    async updateProduct (title, description, price, thumbnail, code, stock,status,id){ 
-        const index = this.#products.findIndex(obj => obj.id === id);
+    async updateProduct (title, description, price, thumbnail, code, stock,status,id){
+        const listaProd= this.productList(); 
+        const index = listaProd.findIndex(obj => obj.id === id);
         console.log(`El siguiente producto va a ser updateado por:${title} description: ${description}`);
         await this.deleteProduct(id);
         const updateado=await this.createProduct(title,description,price,thumbnail,code,stock,status,id);
