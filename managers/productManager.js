@@ -1,74 +1,175 @@
+// import fs from "fs";
+
+
+// class Product {
+//   constructor(title, description, price, thumbnail, code, stock,status, id) {
+//     this.title = title;
+//     this.description = description;
+//     this.price = price;
+//     this.thumbnail = [thumbnail];
+//     this.code = code;
+//     this.stock = stock;
+//     this.status= status;
+//     this.id = id;
+//   }
+//   static id = 0;
+// }
+
+// export class ProductManager {
+//   #products;
+//   #productDirPath;
+//   #productFilePath;
+
+//   constructor() {
+//     this.#products = [];
+//     this.#productDirPath = 'src/files';
+//     this.#productFilePath = `${this.#productDirPath}/Products.json`;
+//   }
+
+//     createProduct = async (title, description, price, thumbnail, code, stock, status, id) => {
+//         const isCodeRepeated = this.#products.some((product) => product.code === code);
+      
+//         if (isCodeRepeated) {
+//           console.log(`El código ${code} está repetido`);
+//           return { code: 400, status: 'Código de producto repetido' };
+//         }
+      
+//         if (id === 0) {
+//           Product.id++;
+//           id = Product.id;
+//         }
+      
+//         const newProduct = new Product(title, description, price, thumbnail, code, stock, status, id);
+//         console.log('Crear Producto: producto a registrar:');
+//         console.log(newProduct);
+      
+//         try {
+//           await fs.promises.mkdir(this.#productDirPath, { recursive: true });
+//           const productsFileExists = await fs.promises.stat(this.#productFilePath).catch(() => false);
+      
+//           if (!productsFileExists) {
+//             await fs.promises.writeFile(this.#productFilePath, '[]');
+//           }
+      
+//           const productsFile = await fs.promises.readFile(this.#productFilePath, 'utf-8');
+//           this.#products = JSON.parse(productsFile);
+      
+//           console.log('Productos encontrados:');
+//           console.log(this.#products);
+      
+//           this.#products.push(newProduct);
+//           console.log('Lista actualizada de productos:');
+//           console.log(this.#products);
+      
+//           await fs.promises.writeFile(this.#productFilePath, JSON.stringify(this.#products, null, 2, '\t'));
+//           return { code: 200, status: 'Producto agregado' };
+//         } catch (error) {
+//           console.error(`Error creando producto nuevo: ${JSON.stringify(newProduct)}, detalle del error: ${error}`);
+//           throw new Error(`Error creando producto nuevo: ${JSON.stringify(newProduct)}, detalle del error: ${error}`);
+//         }
+//       }
 import fs from "fs";
 
-
 class Product {
-  constructor(title, description, price, thumbnail, code, stock,status, id) {
+  constructor(title, description, price, thumbnail, code, stock, status, id) {
     this.title = title;
     this.description = description;
     this.price = price;
     this.thumbnail = [thumbnail];
     this.code = code;
     this.stock = stock;
-    this.status= status;
+    this.status = status;
     this.id = id;
   }
-  static id = 0;
 }
 
 export class ProductManager {
   #products;
   #productDirPath;
   #productFilePath;
+  #lastProductIdPath;
 
   constructor() {
     this.#products = [];
     this.#productDirPath = 'src/files';
     this.#productFilePath = `${this.#productDirPath}/Products.json`;
+    this.#lastProductIdPath = `${this.#productDirPath}/lastProductId.json`;
   }
 
-    createProduct = async (title, description, price, thumbnail, code, stock, status, id) => {
-        const isCodeRepeated = this.#products.some((product) => product.code === code);
-      
-        if (isCodeRepeated) {
-          console.log(`El código ${code} está repetido`);
-          return { code: 400, status: 'Código de producto repetido' };
-        }
-      
-        if (id === 0) {
-          Product.id++;
-          id = Product.id;
-        }
-      
-        const newProduct = new Product(title, description, price, thumbnail, code, stock, status, id);
-        console.log('Crear Producto: producto a registrar:');
-        console.log(newProduct);
-      
-        try {
-          await fs.promises.mkdir(this.#productDirPath, { recursive: true });
-          const productsFileExists = await fs.promises.stat(this.#productFilePath).catch(() => false);
-      
-          if (!productsFileExists) {
-            await fs.promises.writeFile(this.#productFilePath, '[]');
-          }
-      
-          const productsFile = await fs.promises.readFile(this.#productFilePath, 'utf-8');
-          this.#products = JSON.parse(productsFile);
-      
-          console.log('Productos encontrados:');
-          console.log(this.#products);
-      
-          this.#products.push(newProduct);
-          console.log('Lista actualizada de productos:');
-          console.log(this.#products);
-      
-          await fs.promises.writeFile(this.#productFilePath, JSON.stringify(this.#products, null, 2, '\t'));
-          return { code: 200, status: 'Producto agregado' };
-        } catch (error) {
-          console.error(`Error creando producto nuevo: ${JSON.stringify(newProduct)}, detalle del error: ${error}`);
-          throw new Error(`Error creando producto nuevo: ${JSON.stringify(newProduct)}, detalle del error: ${error}`);
-        }
+  readFile = async (filePath) => {
+    try {
+      const fileContent = await fs.promises.readFile(filePath, 'utf-8');
+      return JSON.parse(fileContent);
+    } catch (error) {
+      console.error(`Error reading file ${filePath}: ${error}`);
+      return [];
+    }
+  }
+
+  writeFile = async (filePath, data) => {
+    try {
+      await fs.promises.writeFile(filePath, JSON.stringify(data, null, 2, '\t'));
+    } catch (error) {
+      console.error(`Error writing file ${filePath}: ${error}`);
+    }
+  }
+
+  getNextProductId = async () => {
+    try {
+      const lastProductIdContent = await this.readFile(this.#lastProductIdPath);
+      let lastProductId = 0;
+      if (lastProductIdContent && lastProductIdContent.id) {
+        lastProductId = lastProductIdContent.id;
       }
-      
+      const nextProductId = lastProductId + 1;
+      await this.writeFile(this.#lastProductIdPath, { id: nextProductId });
+      return nextProductId;
+    } catch (error) {
+      console.error(`Error getting next product ID: ${error}`);
+      throw new Error(`Error getting next product ID: ${error}`);
+    }
+  }
+
+  createProduct = async (title, description, price, thumbnail, code, stock, status) => {
+    const isCodeRepeated = this.#products.some((product) => product.code === code);
+
+    if (isCodeRepeated) {
+      console.log(`El código ${code} está repetido`);
+      return { code: 400, status: 'Código de producto repetido' };
+    }
+
+    const newProductId = await this.getNextProductId();
+
+    const newProduct = new Product(title, description, price, thumbnail, code, stock, status, newProductId);
+    console.log('Crear Producto: producto a registrar:');
+    console.log(newProduct);
+
+    try {
+      await fs.promises.mkdir(this.#productDirPath, { recursive: true });
+      const productsFileExists = await fs.promises.stat(this.#productFilePath).catch(() => false);
+
+      if (!productsFileExists) {
+        await fs.promises.writeFile(this.#productFilePath, '[]');
+      }
+
+      this.#products = await this.readFile(this.#productFilePath);
+
+      console.log('Productos encontrados:');
+      console.log(this.#products);
+
+      this.#products.push(newProduct);
+      console.log('Lista actualizada de productos:');
+      console.log(this.#products);
+
+      await this.writeFile(this.#productFilePath, this.#products);
+      return { code: 200, status: 'Producto agregado' };
+    } catch (error) {
+      console.error(`Error creando producto nuevo: ${JSON.stringify(newProduct)}, detalle del error: ${error}`);
+      throw new Error(`Error creando producto nuevo: ${JSON.stringify(newProduct)}, detalle del error: ${error}`);
+    }
+  }
+
+
 
     productList = async () => {
         try {

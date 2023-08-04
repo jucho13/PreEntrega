@@ -3,11 +3,11 @@
  </div>
  <div id="Lista de productos">
     {{#each listaproductos}}
-        <h3>TITULO:{{title}}</h3>
-        <h3>DESCRIPCION:{{description}}</h3>
-        <p>PRECIO:{{price}}</p>
-        <p>STOCK{{stock}}</p>
-        <p>ID:{{id}}</p>
+        <h3>TITULO:{{this.title}}</h3>
+        <h3>DESCRIPCION:{{this.description}}</h3>
+        <p>PRECIO:{{this.price}}</p>
+        <p>STOCK{{this.stock}}</p>
+        <p>ID:{{this.id}}</p>
     {{/each}}
  </div>
  
