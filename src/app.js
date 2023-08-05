@@ -35,6 +35,15 @@ const io = new Server(server);
 
 io.on('connection', socket => {
   console.log('Nuevo cliente conectado');
+  const productLista=pmanager.productList();
+  const dataProd = JSON.parse(productLista);
+  socket.emit('all-products', {dataProd}); 
+  //   const productLista=pmanager.productList();
+  //   res.render("realTimeProducts",{productLista});
+  // socket.on('refresh',()=>{
+  //   const productLista=pmanager.productList();
+  //   res.render("realTimeProducts",{productLista});
+  // })
   socket.on('disconnect', () => {
       console.log('Un cliente se ha desconectado');
   });
