@@ -1,7 +1,8 @@
-import express  from "express";
+import {Router} from "express";
+import { socketServer } from "../src/app.js";
 import {ProductManager} from "../managers/productManager.js";
-const router = express.Router();
 
+const router = Router();
 
 const pmanager= new ProductManager();
 
@@ -9,8 +10,8 @@ const pmanager= new ProductManager();
 
 router.get("/realtimeproducts",async(req,res)=>{
     const productos = await pmanager.productList(); 
-    res.render('realTimeProducts');
-    // res.render('realTimeProducts',{pList});
+    // res.render('realTimeProducts');
+    res.render('realTimeProducts',{productos});
  })
   
 

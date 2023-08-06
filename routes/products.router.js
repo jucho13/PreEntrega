@@ -1,6 +1,8 @@
 import {Router} from "express";
 import {ProductManager} from "../managers/productManager.js";
+import { Server } from "socket.io";
 
+const socket = new Server();
 const router = Router();
 const manager = new ProductManager();
 
@@ -32,6 +34,7 @@ router.post('/api/products', async (req, res) => {
     }
     let status = await manager.createProduct(productToAdd.title,productToAdd.description,productToAdd.price,productToAdd.thumbnail,productToAdd.code,
       productToAdd.stock,productToAdd.status,productToAdd.id);
+    socket.emit('change');
     res.status(status.code).json({status: status.status})
   } catch (error) {
     res.status(500).json({ error: `Ocurrió un error en el servidor: ${error}` });

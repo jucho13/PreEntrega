@@ -6,7 +6,8 @@ import viewRouter from "../routes/views.router.js";
 import RTPRouter from "../routes/realtimeproducts.router.js";
 import handlebars from 'express-handlebars';
 import { Server } from "socket.io";
-import http from 'http';
+import {ProductManager} from '../managers/productManager.js'
+// import http from 'http';
 
 const app=express();
 
@@ -28,14 +29,15 @@ app.use(express.static(__dirname+ "/public"));
 app.use('/', viewRouter);
 app.use('/',RTPRouter);
 // instanciamos socket.io
-const server = http.createServer(app);
-const io = new Server(server);
+const httpServer = app.listen(PORT, () => {console.log(`Server is running on port ${PORT}`)})
+
+export const socketServer = new Server(httpServer);
 
 // abrimos el canal de comunicacion
 
-io.on('connection', socket => {
+socketServer.on('connection',async (socket) => {
   console.log('Nuevo cliente conectado');
-  const productLista=pmanager.productList();
+  const productLista=ProductManager.productList();
   const dataProd = JSON.parse(productLista);
   socket.emit('all-products', {dataProd}); 
   //   const productLista=pmanager.productList();
@@ -44,16 +46,16 @@ io.on('connection', socket => {
   //   const productLista=pmanager.productList();
   //   res.render("realTimeProducts",{productLista});
   // })
+  socket.on('change',async ()=>{
+    const productLista=ProductManager.productList();
+    const dataProd = JSON.parse(productLista);
+    socket.emit('all-products', {dataProd});
+  })
   socket.on('disconnect', () => {
       console.log('Un cliente se ha desconectado');
   });
 });
 
 
-server.listen(PORT,()=>{
-    console.log("Server is working ");
-})
 
-export function getIO() {
-  return io;
-}
+
