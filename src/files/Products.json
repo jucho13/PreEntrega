@@ -68,14 +68,16 @@
     "id": 5
   },
   {
-    "title": "dasd",
-    "description": "dadas",
-    "price": "232",
+    "title": "sassa",
+    "description": "cascas",
+    "price": "12",
     "thumbnail": [
-      "https://carrefourar.vtexassets.com/arquivos/ids/257852-800-auto?v=638011165657870000&width=800&height=auto&aspect=true"
+      [
+        "https://carrefourar.vtexassets.com/arquivos/ids/257852-800-auto?v=638011165657870000&width=800&height=auto&aspect=true"
+      ]
     ],
-    "code": "MEE23",
-    "stock": "2000",
+    "code": "MMM21",
+    "stock": "211",
     "status": true,
     "id": 6
   }

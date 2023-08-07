@@ -52,7 +52,8 @@ socketServer.on('connection',async (socket) => {
   });
   socket.on("deleteProduct", async (id) => {
     console.log("ID del producto a eliminar:", id);
-    await pmanager.deleteProduct(id);
+    const op=  await pmanager.deleteProduct(id);
+    console.log(`Operacion ${op}`);
     const updatedProducts = await pmanager.productList();
     socketServer.emit("productosupdated", updatedProducts);
   });

@@ -55,7 +55,7 @@ function updateProductList (productLista) {
     let code = form.elements.code.value;
     let stock = form.elements.stock.value;
     let status=true;
-    socketCliente.emit("addProduct", [
+    socketCliente.emit('addProduct', {
       title,
       description,
       price,
@@ -63,7 +63,7 @@ function updateProductList (productLista) {
       code,
       stock,
       status
-    ]);
+  });
 
   form.reset();
 });
