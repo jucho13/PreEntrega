@@ -54,19 +54,5 @@
     "stock": 140,
     "status": "true",
     "id": 4
-  },
-  {
-    "title": "Papas Fritas",
-    "description": "Lays",
-    "price": 10,
-    "thumbnail": [
-      [
-        "https://carrefourar.vtexassets.com/arquivos/ids/257852-800-auto?v=638011165657870000&width=800&height=auto&aspect=true"
-      ]
-    ],
-    "code": "P3382",
-    "stock": 1000,
-    "status": "true",
-    "id": 5
   }
 ]

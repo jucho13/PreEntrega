@@ -7,13 +7,15 @@ import RTPRouter from "../routes/realtimeproducts.router.js";
 import handlebars from 'express-handlebars';
 import { Server } from "socket.io";
 import {ProductManager} from '../managers/productManager.js'
-// import http from 'http';
+import http from 'http';
 
 const app=express();
 
 const PORT=8080;
+
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
+app.use(express.static(__dirname+ "/public"));
 //config HANDLEBARS
 app.engine('handlebars', handlebars.engine());
 app.set('views', __dirname + '/views');
@@ -22,7 +24,7 @@ app.set('view engine', 'handlebars');
 //rutas
 app.use("/",productRouter);
 app.use("/",cartRouter);
-app.use(express.static(__dirname+ "/public"));
+
 
 
 // declaramos el router
@@ -35,22 +37,25 @@ export const socketServer = new Server(httpServer);
 
 // abrimos el canal de comunicacion
 
+const pmanager=new ProductManager();
+
 socketServer.on('connection',async (socket) => {
   console.log('Nuevo cliente conectado');
-  const productLista=ProductManager.productList();
-  const dataProd = JSON.parse(productLista);
-  socket.emit('all-products', {dataProd}); 
-  //   const productLista=pmanager.productList();
-  //   res.render("realTimeProducts",{productLista});
-  // socket.on('refresh',()=>{
-  //   const productLista=pmanager.productList();
-  //   res.render("realTimeProducts",{productLista});
-  // })
-  socket.on('change',async ()=>{
-    const productLista=ProductManager.productList();
-    const dataProd = JSON.parse(productLista);
-    socket.emit('all-products', {dataProd});
-  })
+  const productLista=await pmanager.productList();
+  // let productos=JSON.stringify(productLista);
+  socket.emit('all-products', productLista); 
+  socket.on('addProduct', async data => {
+    await pmanager.createProduct(data);
+    const updatedProducts = await pmanager.productList(); // Obtener la lista actualizada de productos
+    socket.emit('productosupdated', updatedProducts);
+  });
+  socket.on("deleteProduct", async (id) => {
+    console.log("ID del producto a eliminar:", id);
+    await pmanager.deleteProduct(id);
+    const updatedProducts = await pmanager.productList();
+    socketServer.emit("productosupdated", updatedProducts);
+  });
+  
   socket.on('disconnect', () => {
       console.log('Un cliente se ha desconectado');
   });

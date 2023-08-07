@@ -67,6 +67,7 @@ router.put('/api/products/:pid', async (req, res) => {
 router.delete('/api/products/:pid', async (req, res) => {
   const {pid} = req.params;
   let p = await manager.deleteProduct(parseInt(pid));
+  socket.emit('change');
   if(p) {
     res.send({status: "success", payload: p });
   }else {

@@ -9,9 +9,9 @@ const pmanager= new ProductManager();
 
 
 router.get("/realtimeproducts",async(req,res)=>{
-    const productos = await pmanager.productList(); 
+    // const productos = await pmanager.productList(); 
     // res.render('realTimeProducts');
-    res.render('realTimeProducts',{productos});
+    res.render('realTimeProducts');
  })
   
 
