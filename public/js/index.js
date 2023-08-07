@@ -51,21 +51,19 @@ function updateProductList (productLista) {
     let title = form.elements.title.value;
     let description = form.elements.description.value;
     let price = form.elements.price.value;
-    let thumbnail = form.elements.thumbnail.value;
+    let thumbnail = [form.elements.thumbnail.value];
     let code = form.elements.code.value;
     let stock = form.elements.stock.value;
     let status=true;
-    let id=0;
-    socketCliente.emit("addProduct", {
+    socketCliente.emit("addProduct", [
       title,
       description,
       price,
       thumbnail,
       code,
       stock,
-      status,
-      id
-    });
+      status
+    ]);
 
   form.reset();
 });

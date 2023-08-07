@@ -45,7 +45,8 @@ socketServer.on('connection',async (socket) => {
   // let productos=JSON.stringify(productLista);
   socket.emit('all-products', productLista); 
   socket.on('addProduct', async data => {
-    await pmanager.createProduct(data);
+    console.log(`lo que regresa de add product es ${data.title}${data.description}${data.price}${data.thumbnail}${data.code}${data.stock}${data.status}${data.id}`);
+    const prodCreado=await pmanager.createProduct(data.title,data.description,data.price,data.thumbnail,data.code,data.stock,data.status,data.id=0);
     const updatedProducts = await pmanager.productList(); // Obtener la lista actualizada de productos
     socket.emit('productosupdated', updatedProducts);
   });
