@@ -6,7 +6,8 @@ import viewRouter from "../routes/views.router.js";
 import RTPRouter from "../routes/realtimeproducts.router.js";
 import handlebars from 'express-handlebars';
 import { Server } from "socket.io";
-import {ProductManager} from '../managers/productManager.js'
+import productService from '../managers/productManager.js'
+import mongoose from "mongoose";
 import http from 'http';
 
 const app=express();
@@ -37,7 +38,7 @@ export const socketServer = new Server(httpServer);
 
 // abrimos el canal de comunicacion
 
-const pmanager=new ProductManager();
+const pmanager=new productService();
 
 socketServer.on('connection',async (socket) => {
   console.log('Nuevo cliente conectado');
@@ -63,6 +64,16 @@ socketServer.on('connection',async (socket) => {
   });
 });
 
+const connectMongoDB = async () => {
+  try {
+      await mongoose.connect('mongodb://127.0.0.1:27017/Ecommerce?retryWrites=true&w=majority');
+      console.log("Conectado con exito a MongoDB usando Moongose.");
+  } catch (error) {
+      console.error("No se pudo conectar a la BD usando Moongose: " + error);
+      process.exit();
+  }
+};
+connectMongoDB();
 
 
 

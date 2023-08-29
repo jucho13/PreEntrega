@@ -1,15 +1,20 @@
 import express  from "express";
-import {ProductManager} from "../managers/productManager.js";
+import productService from "../managers/productManager.js";
+// import { Socket } from "socket.io"; // fijarse en products.router.js que ahi estan bien configurados los servers
 const router = express.Router();
 
-const pmanager= new ProductManager();
+const pmanager= new productService();
+// const io= new Socket();
 
 
-
-router.get("/",async(req,res)=>{
-    const listaproductos=await pmanager.productList();
-    // console.log(`Lista recibida por views.router ${listaproductos}`);
+router.get("/products",async(req,res)=>{
+    const listaproductos=await pmanager.getAll();
+    console.log(`Lista recibida por views.router ${listaproductos.title}`);
     res.render("home",{listaproductos});
+    // io.on('addNewProduct', (prod)=>{
+    //     manager.save();
+
+    // })
   })
   
 

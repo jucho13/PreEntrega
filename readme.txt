@@ -1,0 +1,2 @@
+voy por la parte de carts (router) agregando las funciones. falta probar el agregar nuevos productos por postman
+y demas funciones. y tambien probar los carritos con las nuevas funciones. Y mucho mas of course

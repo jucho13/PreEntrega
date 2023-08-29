@@ -1,10 +1,10 @@
 import {Router} from "express";
 import { socketServer } from "../src/app.js";
-import {ProductManager} from "../managers/productManager.js";
+import productService from "../managers/productManager.js";
 
 const router = Router();
 
-const pmanager= new ProductManager();
+const pmanager= new productService();
 
 
 
