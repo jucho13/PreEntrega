@@ -17,7 +17,7 @@ router.get('/api/products', async (req, res) => {
     //   let newProducts = productsList.slice(0, limit); // Recortar la lista si se proporciona el límite
     //   productsList = newProducts; // Asignar la nueva lista recortada
     // }
-    const { limit, page, sort, query, category, availability } = req.query;
+    const { limit, page, sort, query, availability } = req.query;
 
     const options = {
         page: parseInt(page) || 1,
@@ -28,10 +28,6 @@ router.get('/api/products', async (req, res) => {
         
     if (query) {
       optionsQuery.title = { $regex: new RegExp(query, "i") };
-    }
-        
-    if (category) {
-      optionsQuery.category = category;
     }
         
     const availabilityMap = {
@@ -60,19 +56,33 @@ router.get('/api/products', async (req, res) => {
   }
 });
 
+// GET NORMAL PARA PRUEBAS
+router.get('/api/productss', async (req, res) => {
+  try {
+    const result = await manager.getAllL();  
+    res.send({ status: "success", payload: result });
+  }
+  catch{
+    res.status(500).json({ error: `Ocurrió un error en el servidor: ${error}` });
+  }
+})
 router.post('/api/products', async (req, res) => {
   try {
     //para agregar un nuevo producto colocar id=0 y se autogenera un id
-    // let productToAdd = req.body;
+    let productToAdd = req.body;
     // console.log(productToAdd);
-    // if (!('status' in productToAdd)) {
-    //   productToAdd.status = true;
-    // }
+    if (!('status' in productToAdd)) {
+      productToAdd.status = true;
+    }
     // let status = await manager.createProduct(productToAdd.title,productToAdd.description,productToAdd.price,productToAdd.thumbnail,productToAdd.code,
     //   productToAdd.stock,productToAdd.status,productToAdd.id);
-    let status = await manager.save();
-    socket.emit('change');
-    res.status(status.code).json({status: status.status});
+    let product = await manager.save(productToAdd);
+    // socket.emit('change');
+    if (product){
+      res.send({status: "success", payload: product });
+    }else{
+      res.send({status: "failure invalid code"})
+    }
   } catch (error) {
     res.status(500).json({ error: `Ocurrió un error en el servidor: ${error}` });
   }
@@ -92,8 +102,7 @@ router.get('/api/products/:pid', async (req, res) => {
 router.put('/api/products/:pid', async (req, res) => {
     const {pid} = req.params;
     let productToUpdate = req.body;
-    let p = await manager.updateProduct(productToUpdate.title,productToUpdate.description,productToUpdate.price,productToUpdate.thumbnail,productToUpdate.code,
-      productToUpdate.stock,productToUpdate.status,parseInt(pid));
+    let p = await manager.update(pid,productToUpdate);
     if(p) {
         res.send({status: "success", payload: p });
       }else {
@@ -103,7 +112,7 @@ router.put('/api/products/:pid', async (req, res) => {
 
 router.delete('/api/products/:pid', async (req, res) => {
   const {pid} = req.params;
-  let p = await manager.deleteProduct(parseInt(pid));
+  let p = await manager.delete(pid);
   socket.emit('change');
   if(p) {
     res.send({status: "success", payload: p });

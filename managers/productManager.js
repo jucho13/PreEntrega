@@ -200,46 +200,46 @@ export default class productService {
       console.log("Working products with Database persistence in mongodb");
   }
   isThisCodeRepeated= async (code)=>{
-  const listaProd=await this.getAll();
+  const listaProd=await this.getAllL();
+  console.log(`lista prod title:${listaProd[0].title},lista prod: ${listaProd[0].price}`);
   const isCodeRepeated = listaProd.some((product) => product.code === code);
+  console.log(isCodeRepeated);
   if (!isCodeRepeated) {
     return true;
+    }
   }
-}
   getAll = async (optionsQuery, options) => {
       let products = await productModel.paginate(optionsQuery,options);
       return products;
   }
+  getAllL= async () =>{
+    let products = await productModel.find();
+    return products;
+  }
   save = async (product) => {
-    let validCode= await this.isThisCodeRepeated(data.code);
-    if (validCode=== true)
+    console.log(`en el comienzo de save ${product.code}`);
+    let validCode= await this.isThisCodeRepeated(product.code);
+    if (validCode === true)
     {
       let result = await productModel.create(product);
+      console.log(result);
       return result;
     }
     else
     {
-      return console.error("Codigo repetido");
+      return false;
     }
   }
   update = async (id,data) =>{
-    let validCode= await this.isThisCodeRepeated(data.code);
-    if (validCode=== true)
-    {
-      let updates= await productModel.updateOne(id,data);
-      return updates;  
-    }
-    else
-    {
-      return console.error("Codigo repetido");
-    }
+    let updates= await productModel.updateOne({_id: id },data);
+    return updates;  
   }
   delete = async (id) => {
-    let deletes= await productModel.deleteOne(id);
+    let deletes = await productModel.deleteOne({ _id: id });
     return deletes;
   }
   getProductsByID = async (id) => {
-    let product= await productModel.findOne(id);
+    let product= await productModel.findOne({ _id: id });
     return product;
   }
 }
