@@ -9,7 +9,6 @@ import { Server } from "socket.io";
 import productService from '../managers/productManager.js'
 import mongoose from "mongoose";
 import sessionsRouter from '../routes/sessions.router.js'
-import userRouter from '../routes/user.router.js'
 
 // dependencias para las sessions
 import session from 'express-session';
@@ -28,17 +27,42 @@ app.engine('handlebars', handlebars.engine());
 app.set('views', __dirname + '/views');
 app.set('view engine', 'handlebars');
 
+// seteo direccion mongo
+const MONGO_URL= 'mongodb://127.0.0.1:27017/Ecommerce?retryWrites=true&w=majority';
+
+
+// SESSIONS 
+app.use(session({
+  //ttl: Time to live in seconds,
+  //retries: Reintentos para que el servidor lea el archivo del storage.
+  //path: Ruta a donde se buscará el archivo del session store.
+
+  // Usando --> session-file-store
+  // store: new fileStorage({ path: "./sessions", ttl: 15, retries: 0 }),
+
+
+  // Usando --> connect-mongo
+  store: MongoStore.create({
+      mongoUrl: MONGO_URL,
+      mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
+      ttl: 10 * 60
+  }),
+
+
+  secret: "coderS3cr3t",
+  resave: true, //guarda en memoria
+  saveUninitialized: true, //lo guarda a penas se crea
+}));
+
 //rutas
 app.use("/",productRouter);
 app.use("/",cartRouter);
 app.use('/', viewRouter);
 app.use('/',RTPRouter);
 app.use('/api/sessions',sessionsRouter);
-app.use('/user',userRouter);
 // instanciamos socket.io
 const httpServer = app.listen(PORT, () => {console.log(`Server is running on port ${PORT}`)});
-// seteo direccion mongo
-const MONGO_URL= 'mongodb://127.0.0.1:27017/Ecommerce?retryWrites=true&w=majority';
+
 export const socketServer = new Server(httpServer);
 
 // abrimos el canal de comunicacion
@@ -68,31 +92,6 @@ socketServer.on('connection',async (socket) => {
       console.log('Un cliente se ha desconectado');
   });
 });
-
-// SESSIONS 
-app.use(session({
-  //ttl: Time to live in seconds,
-  //retries: Reintentos para que el servidor lea el archivo del storage.
-  //path: Ruta a donde se buscará el archivo del session store.
-
-  // Usando --> session-file-store
-  // store: new fileStorage({ path: "./sessions", ttl: 15, retries: 0 }),
-
-
-  // Usando --> connect-mongo
-  store: MongoStore.create({
-      mongoUrl: MONGO_URL,
-      mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
-      ttl: 10 * 60
-  }),
-
-
-  secret: "coderS3cr3t",
-  resave: false, //guarda en memoria
-  saveUninitialized: true, //lo guarda a penas se crea
-}));
-
-
 
 
 const connectMongoDB = async () => {

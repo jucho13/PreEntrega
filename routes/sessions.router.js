@@ -1,10 +1,8 @@
 import { Router } from 'express';
 import userModel from '../models/userModel.js';
-import cookieParser from 'cookie-parser';
 
 
 const router = Router();
-router.use(cookieParser("coderS3cr3t"));
 
 // router.post("/register", async (req, res) => {
     
