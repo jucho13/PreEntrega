@@ -210,6 +210,7 @@ export default class productService {
   }
   getAll = async (optionsQuery, options) => {
       let products = await productModel.paginate(optionsQuery,options);
+      // console.log(products.docs[0]);
       return products;
   }
   getAllL= async () =>{
@@ -237,6 +238,9 @@ export default class productService {
   delete = async (id) => {
     let deletes = await productModel.deleteOne({ _id: id });
     return deletes;
+  }
+  deleteProd= async (id, idProd) => {
+    let deletes = await productModel.deleteOne ({_id:id, products_id:idProd});
   }
   getProductsByID = async (id) => {
     let product= await productModel.findOne({ _id: id });
